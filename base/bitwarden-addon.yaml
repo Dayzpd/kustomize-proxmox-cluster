@@ -1,0 +1,47 @@
+apiVersion: v1
+data:
+  namespace.yaml: |
+    apiVersion: v1
+    kind: Namespace
+    metadata:
+      creationTimestamp: null
+      name: external-secrets
+    spec: {}
+    status: {}
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: external-secrets-namespace
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  annotations:
+    sealedsecrets.bitnami.com/cluster-wide: "true"
+  creationTimestamp: null
+  name: bitwarden-access-token
+spec:
+  encryptedData:
+    secret.yaml: AgAqrO0j0WCkoluk+i901rPEq6X3kiZkfoIUeiVOkZX+AsOHrDoVqO6iR4JIWoii7TSAU0x38QikDAVv/49c0WtIYjchhdkOEww/+K0IjQFG3QbB0SU5bD9o8VE1bDjThl0KzrUmsh+BLmG0kH6MdzCeYNqAwjOIbldVv3I+r/hRL9CABAtv9qEXAcZ5ZgpN47cnDhFLdqSCyWoBPg+zgeeEEcSm+JfbiWF+wsRRkoqVSLU71ZTxdLzVQV7TiQNz43eHFUfoHGNEf1Y4MgbW/auz3sNBDmFCIHGDifblpSDBOBALoIu6HWiO8iaZJRGOItLhG/6vKhmrkxKJqigkrPokJjRrUU81yUbC684MzLsqolCihw//Ln+m9LlrYYvNhNSQcF8zvKV+69f0cYJMIzVocjVer7kBh6d+wtvNb18Og2hGtmMp2lKMQOAFMdj30UyEZqLCI1mwMDlB4KaiTeUnHwqnw5N1JFXwIih9iBIAi1TIS+kZi8bw0SPS+PT3Nd0z0cl0lcrguNenHN2XQkdAy10YJ2FPoM9ocCU7wo36OOkQyXkakT1A70ingwx9sWUJQRaLWDaOWJXaLv1PvB1EmGqLMVWi+hh5i6jedxFCj4Idws0Czo+IL/ynOtWxi+nQ9Rdrw4eJvOUeCXNwheA6aPS1SxpVLoY43s6Z59aVo6h+9i4VN2WKMlu9et2h8+e9bIYqceQzwHae/a8Q6qKunUYKSi4kKUVt96VF9Du3mFlBc7e42eK0zKubxbINX9aiz/nkOWLxIsWEm+lrt9EgEYEBzoIhcto52MT1JxWslkDCqP69e5M0BGX6dfgm5JmFwgI61gee+kNEZHHI+MJd/vP0t1i7/aF1KqzkAcqUCFLa4c/3fN/pR5+J85jOjAJ1xbffb2S+LzYo/6YMkMKiruB6+0pW+AXT8aJLvqd/y0tKRiSjqRH1b31tzTbNo+8QRDGc5HTgEvMJCO76O85Aj2kzqLWtNUeulnDD0R10OVXozJWEujHLvu9SdBi1I7qc4xm7qBIdbX0kamvUgzeF/rM47xKOjKOxki3Xbg==
+  template:
+    metadata:
+      annotations:
+        sealedsecrets.bitnami.com/cluster-wide: "true"
+      creationTimestamp: null
+      name: bitwarden-access-token
+    type: addons.cluster.x-k8s.io/resource-set
+---
+apiVersion: addons.cluster.x-k8s.io/v1beta1
+kind: ClusterResourceSet
+metadata:
+  name: bitwarden-addon
+spec:
+  clusterSelector:
+    matchLabels:
+      bitwardenAddon: enabled
+  resources:
+  - kind: ConfigMap
+    name: external-secrets-namespace
+  - kind: Secret
+    name: bitwarden-access-token
+  strategy: Reconcile

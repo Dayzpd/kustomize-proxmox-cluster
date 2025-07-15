@@ -1,0 +1,61 @@
+#!/bin/bash
+
+gitopsRepoUrl=git@github.com:Dayzpd/homelab-apps.git
+gitopsRepoPath="../homelab-gitops"
+appName="proxmox-cluster"
+argoConfigSrc="argocd/$appName.yaml"
+argoConfigDest="apps/$appName.yaml"
+
+function exitWhenNotOnMasterBranch() {
+  if [[ "$(git branch --show-current)" != "master" ]]; then
+    exit 1
+  fi
+}
+
+function ensureGitopsRepoExists(){
+  if [ ! -d "$gitopsRepoPath" ]; then
+    echo "Gitops repo located at '$gitopsRepoPath' not found. Cloning repo..."
+    git clone $gitopsRepoUrl $gitopsRepoPath
+  else
+    echo "Gitops repo already exists at '$gitopsRepoPath'."
+  fi
+}
+
+function syncArgoConfig() {
+  diffResults=$( git diff --name-only HEAD~1 HEAD )
+
+  if [[ $diffResults =~ $argoConfigSrc ]]; then
+    echo "Changes detected for $appName argo config. Syncing to gitops repo..."
+    
+    # Stash changes and checkout to master
+    currentBranch=$(git -C $gitopsRepoPath branch --show-current)
+    git -C $gitopsRepoPath stash
+    git -C $gitopsRepoPath checkout master
+
+    # Copy over argo config
+    cp $argoConfigSrc $gitopsRepoPath/$argoConfigDest
+
+    # Add, commit, and push changes
+    git -C $gitopsRepoPath add $argoConfigDest
+    git -C $gitopsRepoPath commit -m "[hook | $appName] updates $argoConfigDest"
+    git -C $gitopsRepoPath push origin master
+
+    # Switch back to previous branch and pop stash
+    git -C $gitopsRepoPath checkout $currentBranch
+    git -C $gitopsRepoPath stash pop
+  else
+    echo "No changes detected for $appName argo config."
+  fi
+}
+
+function main() {
+
+  exitWhenNotOnMasterBranch
+
+  ensureGitopsRepoExists
+
+  syncArgoConfig
+
+}
+
+main
