@@ -3,7 +3,7 @@
 secretName="bitwarden-access-token"
 envFile="secrets/bitwarden.env"
 addonFile="base/bitwarden-addon.yaml"
-workloadNamespace="external-secrets"
+workloadNamespace="bitwarden"
 
 certFile="secrets/sealed-secrets.crt"
 tempDir="./.temp"
@@ -50,7 +50,7 @@ spec:
       bitwardenAddon: enabled
   resources:
   - kind: ConfigMap
-    name: external-secrets-namespace
+    name: bitwarden-namespace
   - kind: Secret
     name: bitwarden-access-token
   strategy: Reconcile" >> $addonFile
