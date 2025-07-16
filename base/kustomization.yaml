@@ -3,3 +3,5 @@ kind: Kustomization
 resources:
 - bitwarden-addon.yaml
 - metrics-server-addon.yaml
+- cert-manager-crds-addon.yaml
+- external-secrets-crds-addon.yaml
