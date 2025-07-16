@@ -3,9 +3,7 @@ kind: Cluster
 metadata:
   labels:
     bitwardenAddon: enabled
-    certManagerCRDsAddon: enabled
     cluster.x-k8s.io/cluster-name: prodlab
-    externalSecretsCRDsAddon: enabled
     metricsServerAddon: enabled
   name: prodlab
   namespace: prodlab

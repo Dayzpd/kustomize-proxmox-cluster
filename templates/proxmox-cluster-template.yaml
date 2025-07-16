@@ -6,8 +6,6 @@ metadata:
     cluster.x-k8s.io/cluster-name: '${CLUSTER_NAME}'
     bitwardenAddon: enabled
     metricsServerAddon: enabled
-    certManagerCRDsAddon: enabled
-    externalSecretsCRDsAddon: enabled
   name: "${CLUSTER_NAME}"
   namespace: "${CLUSTER_NAME}"
 spec:
