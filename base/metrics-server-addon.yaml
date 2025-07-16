@@ -1,21 +1,4 @@
----
-apiVersion: addons.cluster.x-k8s.io/v1beta1
-kind: ClusterResourceSet
-metadata:
-  name: metrics-server-addon
-spec:
-  clusterSelector:
-    matchLabels:
-      metricsServerAddon: enabled
-  resources:
-  - kind: ConfigMap
-    name: metrics-server
-  strategy: Reconcile
----
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: metrics-server
 data:
   metrics-server.yaml: |
     apiVersion: v1
@@ -124,7 +107,8 @@ data:
       namespace: kube-system
     spec:
       ports:
-      - name: https
+      - appProtocol: https
+        name: https
         port: 443
         protocol: TCP
         targetPort: https
@@ -157,8 +141,7 @@ data:
             - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
             - --kubelet-use-node-status-port
             - --metric-resolution=15s
-            - --kubelet-insecure-tls
-            image: registry.k8s.io/metrics-server/metrics-server:v0.7.2
+            image: registry.k8s.io/metrics-server/metrics-server:v0.8.0
             imagePullPolicy: IfNotPresent
             livenessProbe:
               failureThreshold: 3
@@ -220,3 +203,20 @@ data:
         namespace: kube-system
       version: v1beta1
       versionPriority: 100
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: metrics-server
+---
+apiVersion: addons.cluster.x-k8s.io/v1beta1
+kind: ClusterResourceSet
+metadata:
+  name: metrics-server-addon
+spec:
+  clusterSelector:
+    matchLabels:
+      metricsServerAddon: enabled
+  resources:
+  - kind: ConfigMap
+    name: metrics-server
+  strategy: Reconcile
