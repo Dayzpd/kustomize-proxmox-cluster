@@ -215,7 +215,9 @@ spec:
   clusterName: prodlab
   replicas: 6
   selector:
-    matchLabels: null
+    matchLabels:
+      cluster.x-k8s.io/cluster-name: prodlab
+      cluster.x-k8s.io/deployment-name: prodlab-workers
   template:
     metadata:
       labels:

@@ -215,7 +215,9 @@ spec:
   clusterName: testlab
   replicas: 1
   selector:
-    matchLabels: null
+    matchLabels:
+      cluster.x-k8s.io/cluster-name: testlab
+      cluster.x-k8s.io/deployment-name: testlab-workers
   template:
     metadata:
       labels:

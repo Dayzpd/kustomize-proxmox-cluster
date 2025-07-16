@@ -208,7 +208,9 @@ spec:
   clusterName: "${CLUSTER_NAME}"
   replicas: ${WORKER_MACHINE_COUNT}
   selector:
-    matchLabels:
+    matchLabels: # Argo will be unhappy if this is none
+      cluster.x-k8s.io/cluster-name: "${CLUSTER_NAME}"
+      cluster.x-k8s.io/deployment-name: "${CLUSTER_NAME}-workers"
   template:
     metadata:
       labels:
