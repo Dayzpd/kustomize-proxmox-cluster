@@ -1,5 +1,5 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- bitwarden-addon.yaml
+- calico-cni-addon.yaml
 - metrics-server-addon.yaml
