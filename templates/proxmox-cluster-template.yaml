@@ -4,8 +4,8 @@ kind: Cluster
 metadata:
   labels:
     cluster.x-k8s.io/cluster-name: '${CLUSTER_NAME}'
-    bitwardenAddon: enabled
     metricsServerAddon: enabled
+    calicoCNIAddon: enabled
   name: "${CLUSTER_NAME}"
   namespace: "${CLUSTER_NAME}"
 spec:
@@ -267,6 +267,21 @@ spec:
         apiServer:
           certSANs:
           - "${CLUSTER_NAME}.local.zachary.day"
+      files:
+      - append: false
+        contentFrom:
+          secret:
+            name: service-account-signing-key
+            key: sa.key
+        owner: root:root
+        path: /etc/kubernetes/pki/sa.key
+      - append: false
+        contentFrom:
+          secret:
+            name: service-account-signing-key
+            key: sa.pub
+        owner: root:root
+        path: /etc/kubernetes/pki/sa.pub
       users:
         - name: root
           sshAuthorizedKeys: [${VM_SSH_KEYS}]

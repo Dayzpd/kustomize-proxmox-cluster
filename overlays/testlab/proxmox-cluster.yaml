@@ -2,7 +2,7 @@ apiVersion: cluster.x-k8s.io/v1beta1
 kind: Cluster
 metadata:
   labels:
-    bitwardenAddon: enabled
+    calicoCNIAddon: enabled
     cluster.x-k8s.io/cluster-name: testlab
     metricsServerAddon: enabled
   name: testlab
@@ -274,6 +274,21 @@ spec:
         apiServer:
           certSANs:
           - testlab.local.zachary.day
+      files:
+      - append: false
+        contentFrom:
+          secret:
+            key: sa.key
+            name: service-account-signing-key
+        owner: root:root
+        path: /etc/kubernetes/pki/sa.key
+      - append: false
+        contentFrom:
+          secret:
+            key: sa.pub
+            name: service-account-signing-key
+        owner: root:root
+        path: /etc/kubernetes/pki/sa.pub
       joinConfiguration:
         nodeRegistration:
           kubeletExtraArgs:
