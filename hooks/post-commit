@@ -2,9 +2,12 @@
 
 gitopsRepoUrl=git@github.com:Dayzpd/homelab-apps.git
 gitopsRepoPath="../homelab-gitops"
-appName="proxmox-cluster"
-argoConfigSrc="argocd/$appName.yaml"
-argoConfigDest="apps/$appName.yaml"
+repoName=$( basename -s .git $(git config --get remote.origin.url) )
+appName=$( echo $repoName | sed 's/kustomize-//' )
+
+argoConfigSrc="argocd/*"
+argoConfigDest="clusters/"
+argoConfigRegex="argocd/[^/]+/${appName}\\.yaml"
 
 function exitWhenNotOnMasterBranch() {
   if [[ "$(git branch --show-current)" != "master" ]]; then
@@ -24,16 +27,16 @@ function ensureGitopsRepoExists(){
 function syncArgoConfig() {
   diffResults=$( git diff --name-only HEAD~1 HEAD )
 
-  if [[ $diffResults =~ $argoConfigSrc ]]; then
+  if [[ $diffResults =~ $argoConfigRegex ]]; then
     echo "Changes detected for $appName argo config. Syncing to gitops repo..."
-    
+
     # Stash changes and checkout to master
     currentBranch=$(git -C $gitopsRepoPath branch --show-current)
     git -C $gitopsRepoPath stash
     git -C $gitopsRepoPath checkout master
 
     # Copy over argo config
-    cp $argoConfigSrc $gitopsRepoPath/$argoConfigDest
+    cp -r $argoConfigSrc $gitopsRepoPath/$argoConfigDest
 
     # Add, commit, and push changes
     git -C $gitopsRepoPath add $argoConfigDest
