@@ -18,10 +18,11 @@ for arg in \"$@\"
   shift
 done
 
-secretName="service-account-signing-key"
+secretName="$clusterName-sa"
+secretLabels="cluster.x-k8s.io/cluster-name=$clusterName"
 sealedSecretPath="overlays/$clusterName/$secretName.yaml"
-serviceAccountSigningKeyFile="secrets/$clusterName-sa.key"
-serviceAccountKeyFile="secrets/$clusterName-sa.pub"
+serviceAccountSigningKeyFile="secrets/$secretName.key"
+serviceAccountKeyFile="secrets/$secretName.pub"
 
 mkdir -p $tempDir
 
@@ -43,16 +44,22 @@ echo "Creating $secretName secret file..."
 
 kubectl create secret generic $secretName \
   --namespace $clusterName \
-  --from-file=sa.key=$serviceAccountSigningKeyFile \
-  --from-file=sa.pub=$serviceAccountKeyFile \
-  --dry-run=client -oyaml > $tempDir/unsealed-secret.yaml
+  --type=cluster.x-k8s.io/secret \
+  --from-file=tls.key=$serviceAccountSigningKeyFile \
+  --from-file=tls.crt=$serviceAccountKeyFile \
+  --dry-run=client -oyaml > $tempDir/unlabeled-secret.yaml
+
+kubectl label -f $tempDir/unlabeled-secret.yaml $secretLabels \
+  --local \
+  -o yaml > $tempDir/labeled-secret.yaml
+
 
 echo "Sealing $secretName secret..."
 
 kubeseal \
   --scope namespace-wide \
   --namespace $clusterName \
-  --secret-file $tempDir/unsealed-secret.yaml \
+  --secret-file $tempDir/labeled-secret.yaml \
   --cert $certFile \
   --format yaml > $sealedSecretPath
 

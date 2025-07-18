@@ -5,7 +5,6 @@ resources:
 - ../../base
 - namespace.yaml
 - proxmox-cluster.yaml
-- service-account-signing-key.yaml
 - testlab-sa.yaml
 patches:
 - patch: |-

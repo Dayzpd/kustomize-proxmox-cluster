@@ -3,7 +3,5 @@ kind: Namespace
 metadata:
   creationTimestamp: null
   name: prodlab
-  annotations:
-    argocd.argoproj.io/sync-wave: "-30"
 spec: {}
 status: {}

@@ -272,22 +272,6 @@ spec:
         apiServer:
           certSANs:
           - prodlab.local.zachary.day
-          extraArgs:
-            service-account-key-file: /etc/kubernetes/pki/sa-custom.pub
-            service-account-signing-key-file: /etc/kubernetes/pki/sa-custom.key
-      files:
-      - contentFrom:
-          secret:
-            key: sa.key
-            name: service-account-signing-key
-        owner: root:root
-        path: /etc/kubernetes/pki/sa-custom.key
-      - contentFrom:
-          secret:
-            key: sa.pub
-            name: service-account-signing-key
-        owner: root:root
-        path: /etc/kubernetes/pki/sa-custom.pub
       joinConfiguration:
         nodeRegistration:
           kubeletExtraArgs:

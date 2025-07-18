@@ -37,10 +37,12 @@ clusterctl generate yaml \
 
 cd $clusterDir
 
-rm -f kustomization.yaml
+if [ ! -e kustomization.yaml ]; then
 
-kustomize create \
-  --namespace $clusterName \
-  --resources ../../base,namespace.yaml,proxmox-cluster.yaml
+  kustomize create \
+    --namespace $clusterName \
+    --resources ../../base,namespace.yaml,proxmox-cluster.yaml
+
+fi
 
 cd $currentDir

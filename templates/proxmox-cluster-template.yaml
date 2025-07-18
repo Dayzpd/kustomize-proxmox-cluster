@@ -265,22 +265,6 @@ spec:
         apiServer:
           certSANs:
           - "${CLUSTER_NAME}.local.zachary.day"
-          extraArgs:
-            service-account-key-file: /etc/kubernetes/pki/sa-custom.pub
-            service-account-signing-key-file: /etc/kubernetes/pki/sa-custom.key
-      files:
-      - contentFrom:
-          secret:
-            name: service-account-signing-key
-            key: sa.key
-        owner: root:root
-        path: /etc/kubernetes/pki/sa-custom.key
-      - contentFrom:
-          secret:
-            name: service-account-signing-key
-            key: sa.pub
-        owner: root:root
-        path: /etc/kubernetes/pki/sa-custom.pub
       users:
         - name: root
           sshAuthorizedKeys: [${VM_SSH_KEYS}]
