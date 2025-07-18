@@ -269,15 +269,13 @@ spec:
             service-account-key-file: /etc/kubernetes/pki/sa-custom.pub
             service-account-signing-key-file: /etc/kubernetes/pki/sa-custom.key
       files:
-      - append: false
-        contentFrom:
+      - contentFrom:
           secret:
             name: service-account-signing-key
             key: sa.key
         owner: root:root
         path: /etc/kubernetes/pki/sa-custom.key
-      - append: false
-        contentFrom:
+      - contentFrom:
           secret:
             name: service-account-signing-key
             key: sa.pub
