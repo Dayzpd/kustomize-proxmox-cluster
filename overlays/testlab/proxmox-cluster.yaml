@@ -215,9 +215,7 @@ spec:
   clusterName: testlab
   replicas: 1
   selector:
-    matchLabels:
-      cluster.x-k8s.io/cluster-name: testlab
-      cluster.x-k8s.io/deployment-name: testlab-workers
+    matchLabels: null
   template:
     metadata:
       labels:
@@ -274,6 +272,9 @@ spec:
         apiServer:
           certSANs:
           - testlab.local.zachary.day
+          extraArgs:
+            service-account-key-file: /etc/kubernetes/pki/sa-custom.pub
+            service-account-signing-key-file: /etc/kubernetes/pki/sa-custom.key
       files:
       - append: false
         contentFrom:
@@ -281,14 +282,14 @@ spec:
             key: sa.key
             name: service-account-signing-key
         owner: root:root
-        path: /etc/kubernetes/pki/sa.key
+        path: /etc/kubernetes/pki/sa-custom.key
       - append: false
         contentFrom:
           secret:
             key: sa.pub
             name: service-account-signing-key
         owner: root:root
-        path: /etc/kubernetes/pki/sa.pub
+        path: /etc/kubernetes/pki/sa-custom.pub
       joinConfiguration:
         nodeRegistration:
           kubeletExtraArgs:

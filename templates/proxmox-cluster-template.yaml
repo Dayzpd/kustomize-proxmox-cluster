@@ -208,9 +208,7 @@ spec:
   clusterName: "${CLUSTER_NAME}"
   replicas: ${WORKER_MACHINE_COUNT}
   selector:
-    matchLabels: # Argo will be unhappy if this is none
-      cluster.x-k8s.io/cluster-name: "${CLUSTER_NAME}"
-      cluster.x-k8s.io/deployment-name: "${CLUSTER_NAME}-workers"
+    matchLabels: null
   template:
     metadata:
       labels:
@@ -267,6 +265,9 @@ spec:
         apiServer:
           certSANs:
           - "${CLUSTER_NAME}.local.zachary.day"
+          extraArgs:
+            service-account-key-file: /etc/kubernetes/pki/sa-custom.pub
+            service-account-signing-key-file: /etc/kubernetes/pki/sa-custom.key
       files:
       - append: false
         contentFrom:
@@ -274,14 +275,14 @@ spec:
             name: service-account-signing-key
             key: sa.key
         owner: root:root
-        path: /etc/kubernetes/pki/sa.key
+        path: /etc/kubernetes/pki/sa-custom.key
       - append: false
         contentFrom:
           secret:
             name: service-account-signing-key
             key: sa.pub
         owner: root:root
-        path: /etc/kubernetes/pki/sa.pub
+        path: /etc/kubernetes/pki/sa-custom.pub
       users:
         - name: root
           sshAuthorizedKeys: [${VM_SSH_KEYS}]
