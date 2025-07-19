@@ -38,8 +38,6 @@ spec:
     port: 6443
   dnsServers:
   - 10.202.76.2
-  - 1.1.1.1
-  - 1.1.0.0
   ipv4Config:
     addresses:
     - 10.202.69.10-10.202.69.30
