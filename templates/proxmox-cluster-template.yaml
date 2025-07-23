@@ -59,6 +59,15 @@ spec:
         sshAuthorizedKeys: [${VM_SSH_KEYS}]
     files:
       - content: |
+          {
+            "apiVersion": "kubelet.config.k8s.io/v1beta1",
+            "kind": "KubeletConfiguration",
+            "serverTLSBootstrap": true
+          }
+        path: /etc/kubernetes/patches/kubeletconfiguration0+strategic.json
+        owner: "root:root"
+        permissions: "0644"
+      - content: |
           apiVersion: v1
           kind: Pod
           metadata:
@@ -167,10 +176,14 @@ spec:
       nodeRegistration:
         kubeletExtraArgs:
           provider-id: "proxmox://'{{ ds.meta_data.instance_id }}'"
+      patches:
+        directory: /etc/kubernetes/patches
     joinConfiguration:
       nodeRegistration:
         kubeletExtraArgs:
           provider-id: "proxmox://'{{ ds.meta_data.instance_id }}'"
+      patches:
+        directory: /etc/kubernetes/patches
   version: "${KUBERNETES_VERSION}"
 ---
 kind: ProxmoxMachineTemplate
@@ -265,6 +278,16 @@ spec:
         apiServer:
           certSANs:
           - "${CLUSTER_NAME}.local.zachary.day"
+      files:
+      - content: |
+          {
+            "apiVersion": "kubelet.config.k8s.io/v1beta1",
+            "kind": "KubeletConfiguration",
+            "serverTLSBootstrap": true
+          }
+        path: /etc/kubernetes/patches/kubeletconfiguration0+strategic.json
+        owner: "root:root"
+        permissions: "0644"
       users:
         - name: root
           sshAuthorizedKeys: [${VM_SSH_KEYS}]
@@ -272,3 +295,5 @@ spec:
         nodeRegistration:
           kubeletExtraArgs:
             provider-id: "proxmox://'{{ ds.meta_data.instance_id }}'"
+        patches:
+          directory: /etc/kubernetes/patches
